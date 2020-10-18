@@ -1,6 +1,6 @@
 package br.com.tdgrocha;
 
-import br.com.tdgrocha.pojos.ClientIn;
+import br.com.tdgrocha.models.ClientIn;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -24,7 +24,7 @@ public class ClientResourceTest {
                 .body(new ClientIn("test"))
                 .when().post(Resources.CLIENT)
                 .then()
-                .statusCode(200);
+                .statusCode(204);
     }
 
     @Test
@@ -32,8 +32,7 @@ public class ClientResourceTest {
     public void testGetAllClients() {
         given()
                 .get(Resources.CLIENT)
-                .then().statusCode(200)
-                .body("size()", is(1), "id", hasItem(1));
+                .then().statusCode(200);
     }
 
 }

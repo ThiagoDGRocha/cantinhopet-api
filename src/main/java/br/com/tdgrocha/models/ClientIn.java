@@ -1,4 +1,4 @@
-package br.com.tdgrocha.pojos;
+package br.com.tdgrocha.models;
 
 public class ClientIn {
 

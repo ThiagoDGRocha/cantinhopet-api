@@ -1,14 +1,17 @@
 package br.com.tdgrocha.service;
 
-import br.com.tdgrocha.pojos.ClientIn;
-import br.com.tdgrocha.pojos.ClientOut;
-import br.com.tdgrocha.entities.Client;
+import br.com.tdgrocha.models.ClientEntity;
+import br.com.tdgrocha.models.ClientIn;
+import br.com.tdgrocha.models.ClientOut;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.transaction.Transactional;
 import java.util.List;
+import java.util.stream.Collectors;
 
+@Transactional
 @ApplicationScoped
 public class ClientService {
 
@@ -17,7 +20,7 @@ public class ClientService {
 
     public void save(ClientIn in) {
         try {
-            em.persist(new Client(null, in.getNome()));
+            em.persist(new ClientEntity(null, in.getNome()));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -25,7 +28,11 @@ public class ClientService {
 
     public List<ClientOut> listAll() {
         try {
-            return em.createQuery("FROM " + Client.class.getName(), ClientOut.class).getResultList();
+            return em.createQuery("FROM " + ClientEntity.class.getName(), ClientEntity.class).
+                    getResultList().
+                    parallelStream().
+                    map(entity -> new ClientOut(entity.getId(), entity.getNome())).
+                    collect(Collectors.toList());
         } catch (Exception e) {
             e.printStackTrace();
             return null;
