@@ -3,18 +3,21 @@ package br.com.tdgrocha.service;
 import br.com.tdgrocha.pojos.ClientIn;
 import br.com.tdgrocha.pojos.ClientOut;
 import br.com.tdgrocha.entities.Client;
-import br.com.tdgrocha.repositories.ClientRepository;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class ClientService {
 
+    @Inject
+    EntityManager em;
+
     public void save(ClientIn in) {
         try {
-            ClientRepository.getInstance().persist(new Client(null, in.getNome()));
+            em.persist(new Client(null, in.getNome()));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -22,7 +25,7 @@ public class ClientService {
 
     public List<ClientOut> listAll() {
         try {
-            return ClientRepository.getInstance().findAll().parallelStream().map(entity -> new ClientOut(entity.getId(), entity.getNome())).collect(Collectors.toList());
+            return em.createQuery("FROM " + Client.class.getName(), ClientOut.class).getResultList();
         } catch (Exception e) {
             e.printStackTrace();
             return null;
